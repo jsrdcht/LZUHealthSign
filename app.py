@@ -13,6 +13,7 @@ logging.basicConfig(level=logging.DEBUG, format='%(asctime)s -  %(levelname)s - 
                     datefmt='%Y/%m/%d %H:%M:%S')
 logger = logging.getLogger(__name__)
 
+
 @app.route('/',methods=("GET", "POST"))
 def main():
     if request.method == 'GET':
@@ -38,6 +39,11 @@ def sign(Id):
     return "加入打卡列表成功ヽ(✿ﾟ▽ﾟ)ノ"
 
 
+"""
+启动定时打卡
+eg：访问127.0.0.1:5000/addTask/your-password
+your-password设置在setting.json中
+"""
 @app.route('/addTask/<string:pw>')
 def addTask(pw):
     #检测密码，密码在setting.json文件中设置
@@ -52,6 +58,12 @@ def addTask(pw):
     else:
         return redirect(url_for('main'))
 
+
+"""
+停止定时打卡
+eg：访问127.0.0.1:5000/removeTask/your-password
+your-password设置在setting.json中
+"""
 @app.route('/removeTask/<string:pw>')
 def removeTask(pw):
     setting = json.load(open('setting.json'))
