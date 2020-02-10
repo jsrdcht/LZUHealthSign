@@ -1,6 +1,7 @@
-# 兰州大学健康打卡托管平台
+# LZU AutoHealthySign
 ## 功能
 仅需校园卡号，实现每日自动健康打卡。
+网页可视化管理，适合部署在服务器端使用。
 ## 依赖
 ```shell script
 pip3 install -t requirements.txt
