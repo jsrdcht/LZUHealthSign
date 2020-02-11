@@ -51,6 +51,8 @@ def addTask(pw):
     password = setting['password']
     hour = setting['startHour']
     minute = setting['startMin']
+    if (password == "") or (hour == "") or (minute == ""):
+        return "setting.json未设置相关参数"
     if pw == password:
         scheduler.add_job(func=task, id='start', trigger='cron', hour=hour, minute=minute)
         logger.info('任务开始')
@@ -68,12 +70,37 @@ your-password设置在setting.json中
 def removeTask(pw):
     setting = json.load(open('setting.json'))
     password = setting['password']
+    if password == "":
+        return "setting.json未设置相关参数"
     if pw == password:
         scheduler.remove_all_jobs()
         logger.info('任务结束')
         return "任务结束"
     else:
         return redirect(url_for('main'))
+
+"""
+网页端查看log
+eg：访问127.0.0.1:5000/catLog/your-password
+your-password设置在setting.json中
+"""
+@app.route('/catLog/<string:pw>')
+def catLog(pw):
+    setting = json.load(open('setting.json'))
+    password = setting['password']
+    if password == "":
+        return "setting.json未设置相关参数"
+    allLogpis = ""
+    if pw == password:
+        with open('output.log') as f:
+            for index,logpis in enumerate(f.readlines()):
+                if index >= 10:
+                    break
+                allLogpis += (logpis +'<br/>')
+        return allLogpis
+    else:
+        return redirect(url_for('main'))
+
 
 
 """
