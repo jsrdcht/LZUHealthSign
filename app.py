@@ -20,15 +20,23 @@ def main():
         return render_template('setting.html')
     if request.method == 'POST':
         Id = request.form.get('Id')
+        selectType = request.form.get('type')
+        user_ip = request.remote_addr
         if check_Id(Id) == -1:
             return "是不是账号输错啦w(ﾟДﾟ)w"
-        user_ip = request.remote_addr
-        logger.debug(user_ip+" 加入打卡列表，学号："+Id)
-        return redirect(url_for('sign',Id=Id))
+        #加入打卡列表
+        if selectType == '1':
+            logger.debug(user_ip+"加入打卡列表，学号："+Id)
+            return redirect(url_for('join',Id=Id))
+        #移除打卡列表
+        if selectType == '2':
+            logger.debug(user_ip + "移除打卡列表，学号：" + Id)
+            return redirect(url_for('quit', Id=Id))
 
 
-@app.route('/<int:Id>')
-def sign(Id):
+
+@app.route('/join/<int:Id>')
+def join(Id):
     idList = json.load(open('setting.json'))
     if Id in idList['Id']:
         return "已经在打卡列表中啦w(ﾟДﾟ)w"
@@ -37,6 +45,17 @@ def sign(Id):
         idList['num'] += 1
     json.dump(idList, open('setting.json', 'w'))
     return "加入打卡列表成功ヽ(✿ﾟ▽ﾟ)ノ"
+
+@app.route('/quit/<int:Id>')
+def quit(Id):
+    idList = json.load(open('setting.json'))
+    if Id not in idList['Id']:
+        return "还没有加入列表哦w(ﾟДﾟ)w"
+    else:
+        idList['Id'].remove(Id)
+        idList['num'] -= 1
+    json.dump(idList, open('setting.json', 'w'))
+    return "移除打卡列表成功ヽ(✿ﾟ▽ﾟ)ノ"
 
 
 """
